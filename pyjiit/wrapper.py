@@ -11,7 +11,6 @@ from pyjiit.attendance import AttendanceMeta, AttendanceHeader, Semester
 import requests
 import json
 import base64
-import datetime
 
 
 API = "https://webportal.jiit.ac.in:6011/StudentPortalAPI"
@@ -21,7 +20,7 @@ def authenticated(method):
         if a[0].session is None:
             raise NotLoggedIn
 
-        if a[0].session.expiry < datetime.datetime.now():
+        if a[0].session.expiry < datetime.now():
             raise SessionExpired
 
         return method(*a, **kw)
