@@ -1,6 +1,7 @@
 from datetime import datetime
 from pprint import pformat
 from pyjiit.encryption import serialize_payload, generate_local_name
+from pyjiit.registration import Registrations
 from pyjiit.token import Captcha
 from pyjiit.default import CAPTCHA
 from pyjiit.exceptions import APIError, LoginError, NotLoggedIn, SamePasswordError, SessionExpired
@@ -171,7 +172,31 @@ class Webportal:
         resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True, exception=AccountAPIError)
 
     
+    @authenticated
+    def get_registered_semesters(self):
+        ENDPOINT = "/reqsubfaculty/getregistrationList"
 
+        payload = {
+            "instituteid": self.session.instituteid,
+            "studentid": self.session.memberid
+        }
 
+        resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True)
+        
+        return [Semester.from_json(i) for i in resp["response"]["registrations"]]
+
+    @authenticated
+    def get_registered_subjects_and_faculties(self, semester: Semester):
+        ENDPOINT = "/reqsubfaculty/getfaculties"
+
+        payload = {
+            "instituteid": self.session.instituteid,
+            "studentid": self.session.memberid,
+            "registrationid": semester.registration_id
+        }
+
+        resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True)
+
+        return Registrations(resp["response"])
 
 
