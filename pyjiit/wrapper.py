@@ -1,6 +1,7 @@
 from datetime import datetime
 from pprint import pformat
 from pyjiit.encryption import serialize_payload, generate_local_name
+from pyjiit.exam import ExamEvent
 from pyjiit.registration import Registrations
 from pyjiit.token import Captcha
 from pyjiit.default import CAPTCHA
@@ -199,4 +200,44 @@ class Webportal:
 
         return Registrations(resp["response"])
 
+    
+    @authenticated
+    def get_semesters_for_exam_events(self):
+        ENDPOINT = "/studentcommonsontroller/getsemestercode-withstudentexamevents"
 
+        payload = {
+            "clientid": self.session.clientid,
+            "instituteid": self.session.instituteid,
+            "memberid": self.session.memberid
+        }
+        
+        resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True)
+
+        return [Semester.from_json(i) for i in resp["response"]["semesterCodeinfo"]["semestercode"]]
+
+    @authenticated
+    def get_exam_events(self, semester: Semester):
+        ENDPOINT = "/studentcommonsontroller/getstudentexamevents"
+
+        payload = {
+            "instituteid": self.session.instituteid,
+            "registationid": semester.registration_id # not a typo
+        }
+
+        resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True)
+
+        return [ExamEvent.from_json(i) for i in resp["response"]["eventcode"]["examevent"]]
+
+    @authenticated
+    def get_exam_schedule(self, exam_event: ExamEvent):
+        ENDPOINT = "/studentsttattview/getstudent-examschedule"
+
+        payload = {
+            "instituteid": self.session.instituteid,
+            "registrationid": exam_event.registration_id,
+            "exameventid": exam_event.exam_event_id
+        }
+
+        resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True)
+
+        return resp["response"]
