@@ -5,9 +5,10 @@ from pyjiit.exam import ExamEvent
 from pyjiit.registration import Registrations
 from pyjiit.token import Captcha
 from pyjiit.default import CAPTCHA
-from pyjiit.exceptions import APIError, LoginError, NotLoggedIn, SamePasswordError, SessionExpired
+from pyjiit.exceptions import APIError, LoginError, NotLoggedIn, SessionExpired
 from pyjiit.attendance import AttendanceMeta, AttendanceHeader, Semester
 
+from functools import wraps
 import requests
 import json
 import base64
@@ -16,17 +17,26 @@ import base64
 API = "https://webportal.jiit.ac.in:6011/StudentPortalAPI"
 
 def authenticated(method):
-    def wrapper(*a, **kw):
-        if a[0].session is None:
+    """
+    :param method: A method of Webportal class
+    :returns: A wrapper to method with checks for session invalidation
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        if self.session is None:
             raise NotLoggedIn
 
-        if a[0].session.expiry < datetime.now():
+        if self.session.expiry < datetime.now():
             raise SessionExpired
 
-        return method(*a, **kw)
+        return method(self, *args, **kwargs)
+    wrapper.__doc__ = method.__doc__
     return wrapper
 
 class WebportalSession:
+    """
+    Class which contains session cookies for JIIT Webportal
+    """
     def __init__(self, resp: dict) -> None:
         self.raw_response = resp
         self.regdata: dict = resp['regdata']
@@ -47,15 +57,26 @@ class WebportalSession:
         self.name = self.regdata["name"]
     
     def get_headers(self):
+        """
+        :returns: A dictionary with Authorization HTTP headers
+        """
         return {
             "Authorization": f"Bearer {self.token}",
             "LocalName": generate_local_name()
         }
 
 class Webportal:
+    """
+    Class which implements the functionality for 
+    JIIT Webportal
+    """
+
     def __init__(self) -> None:
         self.session: WebportalSession | None = None
     
+    def __str__(self) -> str:
+        return "Driver Class for JIIT Webportal"
+
     def __hit(self, *args, **kwargs):
         exception = APIError
 
@@ -82,7 +103,14 @@ class Webportal:
         return resp
 
 
-    def student_login(self, username: str, password: str, captcha: Captcha = CAPTCHA) -> WebportalSession:
+    def student_login(self, username: str, password: str, captcha: Captcha) -> WebportalSession:
+        """
+        :param username: A username
+        :param password: A password
+        :param captcha: Captcha object
+        :returns: WebportalSession object (Also sets the internal session variable to this)
+        :raises LoginError: Raised for any error in the remote API while Logging in
+        """
         pretoken_endpoint = "/token/pretoken-check"
         token_endpoint = "/token/generate-token1"     
 
@@ -109,15 +137,23 @@ class Webportal:
 
         return self.session
 
-    def get_captcha(self):
+    def get_captcha(self) -> Captcha:
+        """
+        :returns: Captcha object with empty answer field
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/token/getcaptcha"
 
         resp = self.__hit("GET", API+ENDPOINT)
 
-        return resp["response"]
+        return Captcha.from_json(resp["response"])
     
     @authenticated
     def get_student_bank_info(self):
+        """
+        :returns: A dictionary with student bank info
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/studentbankdetails/getstudentbankinfo"
 
         payload = {
@@ -130,6 +166,10 @@ class Webportal:
 
     @authenticated
     def get_attendance_meta(self):
+        """
+        :returns: AttendanceMeta object
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/StudentClassAttendance/getstudentInforegistrationforattendence"
 
         payload = {
@@ -144,6 +184,12 @@ class Webportal:
 
     @authenticated
     def get_attendance(self, header: AttendanceHeader, semester: Semester):
+        """
+        :param header: An AttendanceHeader object
+        :param semester: A Semester object
+        :returns: A dictionary with attendance data
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/StudentClassAttendance/getstudentattendancedetail"
         
         payload = {
@@ -160,6 +206,11 @@ class Webportal:
 
     @authenticated
     def set_password(self, old_pswd: str, new_pswd: str):
+        """
+        :param old_pswd: Old password string
+        :param new_pswd: New password string
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/clxuser/changepassword"
 
         payload = {
@@ -174,6 +225,10 @@ class Webportal:
     
     @authenticated
     def get_registered_semesters(self):
+        """
+        :returns: A list of Semester objects
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/reqsubfaculty/getregistrationList"
 
         payload = {
@@ -187,6 +242,11 @@ class Webportal:
 
     @authenticated
     def get_registered_subjects_and_faculties(self, semester: Semester):
+        """
+        :param semester: A Semester object
+        :returns: A Registrations object
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/reqsubfaculty/getfaculties"
 
         payload = {
@@ -202,6 +262,10 @@ class Webportal:
     
     @authenticated
     def get_semesters_for_exam_events(self):
+        """
+        :returns: A list of Semester objects
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/studentcommonsontroller/getsemestercode-withstudentexamevents"
 
         payload = {
@@ -216,6 +280,11 @@ class Webportal:
 
     @authenticated
     def get_exam_events(self, semester: Semester):
+        """
+        :param semester: A Semester object
+        :returns: A list of ExamEvent objects
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/studentcommonsontroller/getstudentexamevents"
 
         payload = {
@@ -229,6 +298,11 @@ class Webportal:
 
     @authenticated
     def get_exam_schedule(self, exam_event: ExamEvent):
+        """
+        :param exam_event: An ExamEvent object
+        :returns: A dictionary with exam schedule data
+        :raises APIError: Raised for generic API error
+        """
         ENDPOINT = "/studentsttattview/getstudent-examschedule"
 
         payload = {

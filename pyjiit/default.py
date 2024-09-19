@@ -1,6 +1,6 @@
 from pyjiit.token import Captcha
 
-
+# Sample captcha
 CAPTCHA = Captcha(
     captcha="phw5n", 
     hidden="gmBctEffdSg=",

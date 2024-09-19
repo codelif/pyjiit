@@ -7,9 +7,11 @@ import pyjiit.utils
 IV = b"dcek9wb8frty1pnm"
 
 def generate_key(date=None) -> bytes:
+    """Returns AES key for decrypting/encrypting payload (resets everyday on 0000 hrs IST)"""
     return ('qa8y' + pyjiit.utils.generate_date_seq(date) + 'ty1pn').encode()
 
 def generate_local_name(date=None) -> str:
+    """Returns LocalName Header required for every HTTP request sent to the server"""
     name_bytes = (pyjiit.utils.get_random_char_seq(4) + pyjiit.utils.generate_date_seq(date) + pyjiit.utils.get_random_char_seq(5)).encode()
     
     return base64.b64encode(encrypt(name_bytes)).decode()
@@ -27,6 +29,7 @@ def encrypt(data: bytes) -> bytes:
     return crypt.encrypt(pad(data, 16))
 
 def deserialize_payload(payload: str, is_json=False) -> dict | str:
+    """Returns decrypted json from payload"""
     pbytes = base64.b64decode(payload)
     raw = decrypt(pbytes)
     
@@ -34,6 +37,7 @@ def deserialize_payload(payload: str, is_json=False) -> dict | str:
 
 
 def serialize_payload(payload: dict) -> str:
+    """Returns encrypted payload from dictionary (required while logging in)"""
     raw = json.dumps(payload, separators=(',', ':')).encode()
     pbytes = encrypt(raw)
 

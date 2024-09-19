@@ -2,6 +2,9 @@ from dataclasses import dataclass
 
 @dataclass
 class AttendanceHeader:
+    """
+    Class which contains header info in the Attendance API
+    """
     branchdesc: str
     name: str
     programdesc: str
@@ -19,6 +22,9 @@ class AttendanceHeader:
 
 @dataclass
 class Semester:
+    """
+    Class which contains Semester info
+    """
     registration_code: str
     registration_id: str
 
