@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry poetry-plugin-export
-          poetry export > req.txt
+          poetry export --without-hashes --without-urls | awk '{print $1}'  > req.txt
           python3 -m venv .venv
       - name: Sphinx build
         run: |
