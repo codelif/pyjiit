@@ -5,7 +5,7 @@ from pyjiit.exam import ExamEvent
 from pyjiit.registration import Registrations
 from pyjiit.token import Captcha
 from pyjiit.default import CAPTCHA
-from pyjiit.exceptions import APIError, LoginError, NotLoggedIn, SessionExpired
+from pyjiit.exceptions import APIError, LoginError, NotLoggedIn, SessionExpired, AccountAPIError
 from pyjiit.attendance import AttendanceMeta, AttendanceHeader, Semester
 
 from functools import wraps
