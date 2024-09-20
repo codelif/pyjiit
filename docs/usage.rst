@@ -10,7 +10,7 @@ To get started, install the package using pip
 
 .. code-block:: Bash    
 
-  pip install git+https://github.com/codelif/pyjiit
+  pip install pyjiit
 
 
 Instantiation
