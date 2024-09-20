@@ -220,7 +220,7 @@ class Webportal:
             "confirmpassword": new_pswd
         }
 
-        resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True, exception=AccountAPIError)
+        resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True, exception=ImportError)
 
     
     @authenticated
