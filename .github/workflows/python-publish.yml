@@ -1,0 +1,28 @@
+name: "Build and publish python package"
+
+on:
+  release:
+    types: [ published ]
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12' 
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install
+          
+      - name: Build and publish
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_API_KEY }}
+          poetry publish --build
