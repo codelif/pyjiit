@@ -6,6 +6,11 @@ authors = ["Harsh Sharma <harsh@codelif.in>"]
 license = "MIT License"
 readme = "README.rst"
 
+
+[project.urls]
+Homepage = "https://github.com/codelif/pyjiit"
+Issues = "https://github.com/codelif/pyjiit/issues"
+
 [tool.poetry.dependencies]
 python = "^3.12"
 requests = "^2.32.3"
