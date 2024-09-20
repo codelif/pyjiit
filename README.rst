@@ -1,4 +1,4 @@
-Introduction
+pyjiit
 ============
 
 **pyjiit** is a Python library for accessing data from JIIT Webportal. It uses the internal APIs of JIIT Webportal to programattically access the data. It can be used in various types of projects which require getting attendance data or general student information (like results, registration, etc).
