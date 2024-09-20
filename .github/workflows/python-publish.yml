@@ -6,14 +6,21 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  publish-service-client-package:
+  docs:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Publish PyPi package
-        uses: code-specialist/pypi-poetry-publish@v1
-        with:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_REGISTRY_PASSWORD: ${{ secrets.PYPI_API_KEY }}
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install
+          
+      - name: Build and publish
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_API_KEY }}
+          poetry publish --build
