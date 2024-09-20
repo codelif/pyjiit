@@ -40,8 +40,7 @@ Dependencies
 
 Credits
 -------
-* `arvindpunk`_ (He helped heavily by reverse-engineering the encryption and decryption of the payload, without which this wouldn't exist)
+* `arvindpunk <https://github.com/arvindpunk>`_ (He helped heavily by reverse-engineering the encryption and decryption of the payload, without which this wouldn't exist)
 
-.. _arvindpunk:
-https://github.com/arvindpunk
+
 
