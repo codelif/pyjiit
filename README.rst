@@ -38,3 +38,10 @@ Dependencies
 .. _Dopamine Dose: https://open.spotify.com/playlist/3MD5jRlnXlLrMacF9rirOv?si=pH4WlKBPRyaJUokQwoehnA
 
 
+Credits
+-------
+* `arvindpunk`_ (He helped heavily by reverse-engineering the encryption and decryption of the payload, without which this wouldn't exist)
+
+.. _arvindpunk:
+https://github.com/arvindpunk
+
