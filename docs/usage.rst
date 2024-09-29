@@ -116,7 +116,7 @@ Getting Subject detail
   # instantiate w = Webportal() and login before this
 
   semesters = w.get_registered_semesters()
-  sem = semesters[-1] # get latest sem
+  sem = semesters[0] # get latest sem
 
   reg = w.get_registered_subjects_and_faculties(sem)
   print(*reg.subjects, sep="\n")
