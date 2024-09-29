@@ -44,9 +44,9 @@ class AttendanceMeta:
         self.semesters = [Semester.from_json(i) for i in resp["semlist"]]
 
     def latest_header(self):
-        return self.headers[-1]
+        return self.headers[0]
 
     def latest_semester(self):
-        return self.semesters[-1]
+        return self.semesters[0]
 
 
