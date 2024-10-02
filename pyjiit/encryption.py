@@ -28,7 +28,7 @@ def encrypt(data: bytes) -> bytes:
     crypt = get_crypt(generate_key(), IV)
     return crypt.encrypt(pad(data, 16))
 
-def deserialize_payload(payload: str) -> dict | str:
+def deserialize_payload(payload: str) -> dict:
     """Returns decrypted json from payload"""
     pbytes = base64.b64decode(payload)
     raw = decrypt(pbytes)

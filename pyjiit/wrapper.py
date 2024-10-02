@@ -72,7 +72,7 @@ class Webportal:
     """
 
     def __init__(self) -> None:
-        self.session: WebportalSession | None = None
+        self.session = None
     
     def __str__(self) -> str:
         return "Driver Class for JIIT Webportal"
