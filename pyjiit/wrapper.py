@@ -117,7 +117,7 @@ class Webportal:
         :raises LoginError: Raised for any error in the remote API while Logging in
         """
         pretoken_endpoint = "/token/pretoken-check"
-        token_endpoint = "/token/generate-token1"
+        token_endpoint = "/token/generatewebtoken"
 
 
         payload = {
