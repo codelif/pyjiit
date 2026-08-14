@@ -170,6 +170,21 @@ class Webportal:
         return resp["response"]
 
     @authenticated
+    def get_student_personal_information(self):
+        """
+        :returns: A dictionary with student personal information
+        :raises APIError: Raised for generic API error
+        """
+        ENDPOINT = "/studentpersinfo/getstudent-personalinformation"
+
+        payload = {
+            "instituteid": self.session.instituteid
+        }
+        resp = self.__hit("POST", API+ENDPOINT, json=payload, authenticated=True)
+
+        return resp["response"]
+
+    @authenticated
     def get_attendance_meta(self):
         """
         :returns: AttendanceMeta object
